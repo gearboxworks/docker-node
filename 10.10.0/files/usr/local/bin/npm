@@ -1,0 +1,69 @@
+#!/bin/sh
+
+CMD="$1"
+PACKAGE="$2"
+
+case ${CMD} in
+	'install')
+		# Check for global install.
+		echo "$@" | grep -q -- -g
+		if [ "$?" == "0" ]
+		then
+			# Remove all trailing chars before and including /
+			LINK="$(echo "${PACKAGE}" | sed 's/^.*\///')"
+		fi
+		;;
+
+	'serve')
+		;;
+
+	*)
+		ARGS=""
+		;;
+esac
+
+
+# Snapshot /usr/local/bin before we install.
+find /usr/local/bin ! -type d | sort > /tmp/before
+
+
+# Perform whatever...
+/usr/local/bin/npm.bin $ARGS "$@"
+
+
+# Find any symlinks that may have been created.
+if [ ! -d /project/.project/bin ]
+then
+	mkdir -p /project/.project/bin
+fi
+
+find /usr/local/bin ! -type d | sort > /tmp/after
+NEWFILES="$(diff -wa /tmp/before /tmp/after | awk -F+ '/^\+\/usr\/local\/bin/{print$2}')"
+for file in ${NEWFILES}
+do
+	SRCFILE="$(readlink -f ${file} | sed 's#/usr/local/lib/#/project/.project/#')"
+	DSTFILE="/project/.project/bin/$(basename "${SRCFILE}" | sed 's/\.[^.]*$//')"
+	ln -s $SRCFILE ${DSTFILE}
+done
+
+
+if [ "${LINK}" != "" ]
+then
+	npm link ${LINK}
+fi
+
+
+# Move any log file into place.
+if [ -d ${HOME}/.npm/_logs ]
+then
+	if [ ! -d /project/.project/_logs ]
+	then
+		mkdir -p /project/.project/_logs
+	fi
+
+	echo "Gearbox: Log files moved to /project/.project/_logs"
+	find ${HOME}/.npm/_logs -type f | xargs -i mv -i {} /project/.project/_logs
+fi
+
+
+# And we are done.

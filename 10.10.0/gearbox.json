@@ -1,0 +1,18 @@
+{
+	"state": "production",
+	"organization": "gearboxworks",
+	"name": "node",
+	"version": "10.10.0",
+	"majorversion": "10.10",
+	"latest": "1",
+	"class": "system",
+	"network": "--network gearboxnet",
+	"volumes": "-v %%PROJECT_ROOT%%/.project/node_modules:/usr/local/lib/node_modules",
+	"ports": "",
+	"restart": "--restart always",
+	"args": "",
+	"workdir": "-w {PWD}",
+	"build_args": "--squash",
+	"env": "NODE_VERSION"
+}
+

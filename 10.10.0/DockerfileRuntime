@@ -1,0 +1,23 @@
+FROM node:10.10.0-alpine
+MAINTAINER Gearbox Team <team@gearbox.works>
+
+COPY gearbox.json /etc/gearbox.json
+COPY files /
+
+RUN apk update && \
+	apk add --no-cache less bash shadow git && \
+	mv -i /usr/local/lib/node_modules/npm /usr/local/npm && \
+	ln -sf /usr/local/npm/bin/npm-cli.js /usr/local/bin/npm.bin && \
+	ln -sf /usr/local/npm/bin/npx-cli.js /usr/local/bin/npx && \
+	chmod a+x /usr/local/bin/npm && \
+	userdel -f node && \
+	groupadd -g 1000 gearbox && \
+	mkdir /var/mail && \
+	useradd -m -d /home/box -c "Gearbox user" -u 1000 -g 1000 -N -s /bin/bash gearbox && \
+	chown -fR gearbox:gearbox /usr/local
+
+USER gearbox
+
+WORKDIR /project
+
+# EXPOSE 8025 1025
