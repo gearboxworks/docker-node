@@ -20,4 +20,4 @@ USER gearbox
 
 WORKDIR /project
 
-# EXPOSE 8025 1025
+# EXPOSE 22 8025 1025

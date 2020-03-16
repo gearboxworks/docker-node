@@ -1,3 +1,5 @@
+![release](https://github.com/gearboxworks/docker-node/workflows/release/badge.svg?event=release)
+
 ![node 10.10.x](https://img.shields.io/badge/node-10.10.x-green.svg)
 
 ![Gearbox](https://github.com/gearboxworks/gearbox.github.io/raw/master/Gearbox-100x.png)
